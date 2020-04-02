@@ -1,0 +1,92 @@
+#drawShapes {
+    background-color: rgb(255, 255, 255);
+}
+
+canvas {
+    padding: 0px;
+}
+
+div {
+    padding: 0px;
+    margin: 0px;
+}
+
+.grid{
+    background:
+        linear-gradient(-90deg, rgba(0,0,0,0.20) 1px, transparent 1px), 
+        linear-gradient(rgba(0,0,0,.20) 1px, transparent 1px);
+     background-size:
+        10px 10px,
+        10px 10px;
+}
+
+#btnProceedToScreen2 {
+    float: right;
+}
+
+#lblDrawMode {
+    background-image : url("img/pen-solid.svg");
+    background-position : center center;
+    background-repeat:no-repeat;
+}
+
+#lblEditMode {
+    background-image : url("img/edit-solid.svg");
+    background-position : center center;
+    background-repeat:no-repeat;
+}
+
+#lblAdvancedEditMode {
+    background-image : url("img/edit-solid.svg");
+    background-position : center center;
+    background-repeat:no-repeat;
+}
+
+#btnUndo {
+    background-image : url("img/undo-solid.svg");
+    background-position : center center;
+    background-repeat:no-repeat;
+}
+
+#btnReset {
+    background-image : url("img/file-regular.svg");
+    background-position : center center;
+    background-repeat: no-repeat;
+}
+
+#lblLine {
+    background-image : url("img/window-minimize-regular.svg");
+    background-position : center center;
+    background-repeat:no-repeat;
+}
+
+#lblCurve {
+    background-image : url("img/cuttlefish-brands.svg");
+    background-position : center center;
+    background-repeat:no-repeat;
+}
+
+
+
+#grpModes {
+    width : 200px;
+    height : 25px;
+}
+
+#btnUndo {
+    width : 35px;
+    height : 25px;
+}
+
+#btnReset {
+    width : 35px;
+    height : 25px;
+}
+
+#btnClosed {
+    width : 35px;
+    height : 25px;
+    background-image : url("img/circle-regular.svg");
+    background-position : center center;
+    background-repeat:no-repeat;
+}
