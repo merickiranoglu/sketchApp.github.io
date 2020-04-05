@@ -86,7 +86,7 @@ document.getElementById("btnClosed").addEventListener('click', function () {
 btnClosed.onclick = function (events) {
 }
 
-function updateDraw(points, extraLengths = null, previewPoint = null, highlightPointIndex = -1, highlightLineIndex = -1) {
+function updateDraw(points, extraLengths = null, previewPoint = null, highlightPointIndex = -1, highlightLineIndex = -1, showTexts = false) {
 
     var centerX = 0;
     var centerY = 0;
@@ -125,7 +125,7 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
         else {
             line.stroke = "black"
         }
-        line.linewidth = 2;
+        line.linewidth = 3;
         two.add(line);
         // var dist = getDistance(pt, nextPt);
     }
@@ -138,14 +138,14 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
 
     for (i = 0; i < points.length; i++) {
         if (i == highlightPointIndex) {
-            let ptMark = new Two.Circle(points[i].x, points[i].y, 3);
+            let ptMark = new Two.Circle(points[i].x, points[i].y, 8);
             ptMark.fill = "red";
             ptMark.stroke = "red";
             ptMark.linewidth = 3;
             two.add(ptMark);
         }
         else {
-            let ptMark = new Two.Circle(points[i].x, points[i].y, 2);
+            let ptMark = new Two.Circle(points[i].x, points[i].y, 4);
             ptMark.fill = "black";
             ptMark.stroke = "black";
             ptMark.linewidth = 3;
@@ -153,114 +153,123 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
         }
     }
 
-    for (i = 0; i < points.length - 1; i++) {
-        var pt = points[i];
-        var nextPt = points[i + 1];
-        var dist = getDistance(pt, nextPt);
-
-        var dxNext = nextPt.x - pt.x;
-        var dyNext = nextPt.y - pt.y;
-        var angleNext = Math.atan2(dyNext, dxNext);
-
-        if (angleNext < 0) { angleNext += Math.PI * 2; }
-
-        if (angleNext < Math.PI / 2 * 3 && angleNext > Math.PI / 2) {
-            angleNext += Math.PI;
-        }
-
-        var txtLocationX = getMidPtX(pt, nextPt) + Math.cos(angleNext + Math.PI / 2) * 20;
-        var txtLocationY = getMidPtY(pt, nextPt) + Math.sin(angleNext + Math.PI / 2) * 20;
-
-        var advancedEdittxtLocationX = getMidPtX(pt, nextPt) + Math.cos(angleNext + Math.PI / 2) * 40;
-        var advancedEdittxtLocationY = getMidPtY(pt, nextPt) + Math.sin(angleNext + Math.PI / 2) * 40;
-
-        var dx1 = getMidPtX(pt, nextPt) - centerX;
-        var dy1 = getMidPtY(pt, nextPt) - centerY;
-        var distFromMidPtToCenter = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-
-        var dx2 = txtLocationX - centerX;
-        var dy2 = txtLocationY - centerY;
-        var distFromTxtPtToCenter = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-
-        if (distFromMidPtToCenter > distFromTxtPtToCenter) {
-            txtLocationX = getMidPtX(pt, nextPt) - Math.cos(angleNext + Math.PI / 2) * 20;
-            txtLocationY = getMidPtY(pt, nextPt) - Math.sin(angleNext + Math.PI / 2) * 20;
-
-            advancedEdittxtLocationX = getMidPtX(pt, nextPt) - Math.cos(angleNext + Math.PI / 2) * 40;
-            advancedEdittxtLocationY = getMidPtY(pt, nextPt) - Math.sin(angleNext + Math.PI / 2) * 40;
-
-        }
-
-        var txt = new Two.Text(dist.toPrecision(5), txtLocationX, txtLocationY);
-        txt.rotation = angleNext;
-        two.add(txt);
-
-        if (advancedEdit && extraLengths != null) {
-            var extratxt = new Two.Text(extraLengths[i], advancedEdittxtLocationX, advancedEdittxtLocationY);
-            extratxt.rotation = angleNext;
-            two.add(extratxt);
-        }
-    }
-
-    for (i = 0; i < points.length - 1; i++) {
-
-        if (i == 0 && isPolygonClosed == false) {
-            continue;
-        }
-
-        if (points.length > 2 && i < points.length) {
-
+    if (showTexts) {
+        for (i = 0; i < points.length - 1; i++) {
             var pt = points[i];
-            var prevPt = points[i];
-            var nextPt = points[i];
-
-            if (i == points.length) {
-                prevPt = points[i - 1];
-                nextPt = points[0];
-            }
-            else if (i == 0) {
-                prevPt = points[points.length - 2];
-                nextPt = points[i + 1];
-            }
-            else {
-                prevPt = points[i - 1];
-                nextPt = points[i + 1];
-            }
+            var nextPt = points[i + 1];
+            var dist = getDistance(pt, nextPt);
 
             var dxNext = nextPt.x - pt.x;
             var dyNext = nextPt.y - pt.y;
             var angleNext = Math.atan2(dyNext, dxNext);
 
-            var dxPrev = prevPt.x - pt.x;
-            var dyPrev = prevPt.y - pt.y;
-            var anglePrev = Math.atan2(dyPrev, dxPrev);
+            if (angleNext < 0) { angleNext += Math.PI * 2; }
 
-            if (angleNext > anglePrev) {
-                anglePrev += Math.PI * 2.0;
+            if (angleNext < Math.PI / 2 * 3 && angleNext > Math.PI / 2) {
+                angleNext += Math.PI;
             }
 
-            var arc = two.makeArcSegment(pt.x, pt.y, 0, 20, anglePrev, angleNext)
-            if (i == highlightPointIndex) {
-                arc.fill = "red";
+            var txtLocationX = getMidPtX(pt, nextPt) + Math.cos(angleNext + Math.PI / 2) * 10;
+            var txtLocationY = getMidPtY(pt, nextPt) + Math.sin(angleNext + Math.PI / 2) * 10;
+
+            var advancedEdittxtLocationX = getMidPtX(pt, nextPt) + Math.cos(angleNext + Math.PI / 2) * 25;
+            var advancedEdittxtLocationY = getMidPtY(pt, nextPt) + Math.sin(angleNext + Math.PI / 2) * 25;
+
+            var dx1 = getMidPtX(pt, nextPt) - centerX;
+            var dy1 = getMidPtY(pt, nextPt) - centerY;
+            var distFromMidPtToCenter = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+
+            var dx2 = txtLocationX - centerX;
+            var dy2 = txtLocationY - centerY;
+            var distFromTxtPtToCenter = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+
+            if (distFromMidPtToCenter > distFromTxtPtToCenter) {
+                txtLocationX = getMidPtX(pt, nextPt) - Math.cos(angleNext + Math.PI / 2) * 10;
+                txtLocationY = getMidPtY(pt, nextPt) - Math.sin(angleNext + Math.PI / 2) * 10;
+
+                advancedEdittxtLocationX = getMidPtX(pt, nextPt) - Math.cos(angleNext + Math.PI / 2) * 25;
+                advancedEdittxtLocationY = getMidPtY(pt, nextPt) - Math.sin(angleNext + Math.PI / 2) * 25;
+
             }
-            else {
-                arc.fill = "#e5ec70";
+
+
+
+            var txt = new Two.Text(Math.round(dist), txtLocationX, txtLocationY);
+            txt.rotation = angleNext;
+            two.add(txt);
+
+            if (advancedEdit && extraLengths != null) {
+                var extratxt = new Two.Text("(" + extraLengths[i] + ")", advancedEdittxtLocationX, advancedEdittxtLocationY);
+
+                extratxt.rotation = angleNext;
+                extratxt.weight = 600;
+                two.add(extratxt);
             }
-
-            var angleDiff = (anglePrev - angleNext) * 180 / Math.PI;
-            var txtMoveAngle = (angleNext + anglePrev) / 2;
-
-            var angleTextLocationX = pt.x + 50 * Math.cos(txtMoveAngle);
-            var angleTextLocationY = pt.y + 50 * Math.sin(txtMoveAngle);
-
-            two.makeText(angleDiff.toPrecision(5) + "°", angleTextLocationX, angleTextLocationY, {
-                alignment: 'center'
-            });
         }
 
+        for (i = 0; i < points.length - 1; i++) {
+
+            if (i == 0 && isPolygonClosed == false) {
+                continue;
+            }
+
+            if (points.length > 2 && i < points.length) {
+
+                var pt = points[i];
+                var prevPt = points[i];
+                var nextPt = points[i];
+
+                if (i == points.length) {
+                    prevPt = points[i - 1];
+                    nextPt = points[0];
+                }
+                else if (i == 0) {
+                    prevPt = points[points.length - 2];
+                    nextPt = points[i + 1];
+                }
+                else {
+                    prevPt = points[i - 1];
+                    nextPt = points[i + 1];
+                }
+
+                var dxNext = nextPt.x - pt.x;
+                var dyNext = nextPt.y - pt.y;
+                var angleNext = Math.atan2(dyNext, dxNext);
+
+                var dxPrev = prevPt.x - pt.x;
+                var dyPrev = prevPt.y - pt.y;
+                var anglePrev = Math.atan2(dyPrev, dxPrev);
+
+                if (angleNext > anglePrev) {
+                    anglePrev += Math.PI * 2.0;
+                }
+
+                var arc = two.makeArcSegment(pt.x, pt.y, 0, 20, anglePrev, angleNext)
+                if (i == highlightPointIndex) {
+                    arc.fill = "red";
+                }
+                else {
+                    arc.fill = "white";
+                }
+
+                var angleDiff = (anglePrev - angleNext) * 180 / Math.PI;
+                var txtMoveAngle = (angleNext + anglePrev) / 2;
+
+                var angleTextLocationX = pt.x + 35 * Math.cos(txtMoveAngle);
+                var angleTextLocationY = pt.y + 35 * Math.sin(txtMoveAngle);
+
+                two.makeText(Math.round(angleDiff) + "°", angleTextLocationX, angleTextLocationY, {
+                    alignment: 'center'
+                });
+            }
 
 
+
+        }
     }
+
+
+
 }
 
 
@@ -290,7 +299,8 @@ function drawGrid(gridSize) {
 function enterDrawMode() {
     console.log("Draw mode activated.");
     drawShapes.classList.add("grid");
-
+    btnUndo.disabled = false;
+    btnClosed.disabled = false;
     updateDraw(points, extraLengths);
 
     canvas.ontouchend = function (ev) {
@@ -322,15 +332,20 @@ function enterDrawMode() {
         }
     }
 
-    btnUndo.style.display = "inline";
+    // btnUndo.style.display = "inline";
 }
 
 function enterEditMode() {
     console.log("Edit mode activated.");
-    btnUndo.style.display = "none";
+    btnUndo.disabled = true;
+    btnClosed.disabled = true;
     drawShapes.classList.remove("grid");
 
-    updateDraw(points, extraLengths);
+    updateDraw(points, extraLengths, null, -1, -1, true);
+
+    canvas.ontouchmove = function (ev) {
+
+    }
 
     canvas.ontouchend = function (ev) {
         ev.preventDefault();
@@ -367,7 +382,7 @@ function enterEditMode() {
         two.clear();
 
         if (minDistToLine < minDistToPoint) {
-            updateDraw(points, extraLengths, null, -1, closestLineIndex);
+            updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
 
             setTimeout(function () {
@@ -375,6 +390,10 @@ function enterEditMode() {
                 var lineLength = getDistance(points[closestLineIndex], points[closestLineIndex + 1]);
 
                 var length = prompt("Please enter new length:", Math.round(lineLength, 2));
+
+                if (length == null) {
+                    length = lineLength;
+                }
 
                 var dxNext = points[closestLineIndex + 1].x - points[closestLineIndex].x;
                 var dyNext = points[closestLineIndex + 1].y - points[closestLineIndex].y;
@@ -388,14 +407,14 @@ function enterEditMode() {
                 points[closestLineIndex + 1].x = points[closestLineIndex].x + dxNewNext;
                 points[closestLineIndex + 1].y = points[closestLineIndex].y + dyNewNext;
 
-                updateDraw(points, extraLengths, null, -1, closestLineIndex);
+                updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
                 console.log(length);
             }, 25);
         }
         else {
 
-            updateDraw(points, extraLengths, null, closestPointIndex, -1);
+            updateDraw(points, extraLengths, null, closestPointIndex, -1, true);
             setTimeout(function () {
 
                 var pt = points[closestPointIndex];
@@ -440,25 +459,19 @@ function enterEditMode() {
 
                     console.clear();
 
-                    console.log("angleNext : " + angleNext * 180 / Math.PI);
-                    console.log("anglePrev : " + anglePrev * 180 / Math.PI);
-                    console.log("angleDiff : " + angleDiff);
                     var newAngle = prompt("Please enter new angle:", Math.round(angleDiff, 2));
-                    console.log("PROMPT");
-                    console.log("newAngleDiff : " + newAngle);
+
+                    if (newAngle == null) { newAngle = angleDiff; }
 
                     var newAngleNext = (anglePrev * 180 / Math.PI) - newAngle;
-                    console.log("newAngleNext : " + newAngleNext);
 
                     var dxNew = length * Math.cos(newAngleNext * Math.PI / 180);
-                    console.log("dxNew : " + dxNew);
                     var dyNew = length * Math.sin(newAngleNext * Math.PI / 180);
-                    console.log("dyNew : " + dyNew);
 
                     points[closestPointIndex + 1].x = points[closestPointIndex].x + dxNew;
                     points[closestPointIndex + 1].y = points[closestPointIndex].y + dyNew;
 
-                    updateDraw(points, extraLengths, null, closestPointIndex, -1);
+                    updateDraw(points, extraLengths, null, closestPointIndex, -1, true);
                 }
             }, 25);
         }
@@ -469,11 +482,18 @@ function enterEditMode() {
 
 
 function enterAdvancedEditMode() {
-    console.log("Edit mode activated.");
-    btnUndo.style.display = "none";
+    console.log("Advanced Edit mode activated.");
+    btnUndo.disabled = true;
+    btnClosed.disabled = true;
     drawShapes.classList.remove("grid");
 
-    updateDraw(points, extraLengths);
+    updateDraw(points, extraLengths, null, -1, -1, true);
+
+
+    canvas.ontouchmove = function (ev) {
+
+    }
+
 
     canvas.ontouchend = function (ev) {
         ev.preventDefault();
@@ -482,19 +502,9 @@ function enterAdvancedEditMode() {
         let y = ev.changedTouches[0].pageY;
 
         var mousePt = new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.move);
-
-        var closestPointIndex = 0;
-        var closestLineIndex = 0;
-        var minDistToPoint = Number.MAX_VALUE;
         var minDistToLine = Number.MAX_VALUE;
 
-        for (i = 0; i < points.length; i++) {
-            var distToPoint = getDistance(mousePt, points[i]);
-            if (distToPoint < minDistToPoint) {
-                minDistToPoint = distToPoint;
-                closestPointIndex = i;
-            }
-        }
+        var closestLineIndex = 0;
 
         for (i = 0; i < points.length - 1; i++) {
             if (i < points.length - 1) {
@@ -509,20 +519,20 @@ function enterAdvancedEditMode() {
 
         two.clear();
 
-        if (minDistToLine < minDistToPoint) {
-            updateDraw(points, extraLengths, null, -1, closestLineIndex);
+        updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
-            setTimeout(function () {
-                var lineLength = getDistance(points[closestLineIndex], points[closestLineIndex + 1]);
-                var length = prompt("Please enter EXTRA length:", Math.round(lineLength, 2));
+        setTimeout(function () {
+            var lineLength = getDistance(points[closestLineIndex], points[closestLineIndex + 1]);
+            var length = prompt("Please enter EXTRA length:", extraLengths[closestLineIndex]);
 
-                extraLengths[closestLineIndex] = length;
+            if (length == null) { length = extraLengths[closestLineIndex]; }
+            extraLengths[closestLineIndex] = length;
 
-                updateDraw(points, extraLengths, null, -1, closestLineIndex);
+            updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
-                console.log(length);
-            }, 25);
-        }
+            console.log(length);
+        }, 25);
+
     }
 }
 
