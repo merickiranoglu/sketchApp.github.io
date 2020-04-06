@@ -1,18 +1,15 @@
 const two = new Two
     ({
-        fullscreen: false,
-        type: Two.Types.canvas,
-        width: 320,
-        height: 540
+        fullscreen: true,
+        type: Two.Types.canvas
     })
 
-const drawShapes = document.getElementById('drawShapes');
-two.appendTo(drawShapes);
-const canvas = drawShapes.getElementsByTagName('canvas')[0];
+two.appendTo(divSketch);
+const canvas = divSketch.getElementsByTagName('canvas')[0];
 
-drawShapes.style["width"] = "320px";
-drawShapes.style["height"] = "540px";
-drawShapes.style["border"] = "2px solid black";
+divSketch.style["width"] = "100%";
+divSketch.style["height"] = "95%";
+divSketch.style["border"] = "2px solid black";
 var gridSize = 10;
 
 two.clear();
@@ -298,7 +295,7 @@ function drawGrid(gridSize) {
 
 function enterDrawMode() {
     console.log("Draw mode activated.");
-    drawShapes.classList.add("grid");
+    divSketch.classList.add("grid");
     btnUndo.disabled = false;
     btnClosed.disabled = false;
     updateDraw(points, extraLengths);
@@ -339,7 +336,7 @@ function enterEditMode() {
     console.log("Edit mode activated.");
     btnUndo.disabled = true;
     btnClosed.disabled = true;
-    drawShapes.classList.remove("grid");
+    divSketch.classList.remove("grid");
 
     updateDraw(points, extraLengths, null, -1, -1, true);
 
@@ -485,7 +482,7 @@ function enterAdvancedEditMode() {
     console.log("Advanced Edit mode activated.");
     btnUndo.disabled = true;
     btnClosed.disabled = true;
-    drawShapes.classList.remove("grid");
+    divSketch.classList.remove("grid");
 
     updateDraw(points, extraLengths, null, -1, -1, true);
 
