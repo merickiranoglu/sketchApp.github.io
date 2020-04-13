@@ -24,28 +24,39 @@ div {
     float: right;
 }
 
-#lblDrawMode {
-    background-image : url("img/pen-solid.svg");
+#lblDrawLineMode {
+    background-image : url("img/line_tool.png");
     background-position : center center;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
+    background-size: 20px;
+}
+
+#lblDrawCurveMode {
+    background-image : url("img/0_degree_tool.png");
+    background-position : center center;
+    background-repeat: no-repeat;
+    background-size: 20px;
 }
 
 #lblEditMode {
-    background-image : url("img/edit-solid.svg");
+    background-image : url("img/edit.png");
     background-position : center center;
     background-repeat:no-repeat;
+    background-size: 20px;
 }
 
 #lblAdvancedEditMode {
-    background-image : url("img/edit-solid.svg");
+    background-image : url("img/advanced_edit_mode.png");
     background-position : center center;
     background-repeat:no-repeat;
+    background-size: 20px;
 }
 
 #btnUndo {
-    background-image : url("img/undo-solid.svg");
+    background-image : url("img/undo.png");
     background-position : center center;
     background-repeat:no-repeat;
+    background-size: 20px;
 }
 
 #btnReset {
