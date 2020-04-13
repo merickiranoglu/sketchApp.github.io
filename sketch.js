@@ -183,7 +183,7 @@ function updateDraw(points, curvedIndexes = null, extraLengths = null, previewPo
     ptMarkCenter.fill = "red";
     ptMarkCenter.stroke = "red";
     ptMarkCenter.linewidth = 2;
-    two.add(ptMarkCenter);
+    // two.add(ptMarkCenter);
 
     for (i = 0; i < points.length; i++) {
         if (i == highlightPointIndex) {
@@ -589,8 +589,6 @@ function enterEditMode() {
                     points[i + 1].y = points[i + 1].y + dyOtherPts;
                 }
 
-               
-
                 updateDraw(points, curvedIndexes, extraLengths, null, -1, closestLineIndex, true);
 
             }, 25);
@@ -654,6 +652,8 @@ function enterEditMode() {
                     points[closestPointIndex + 1].x = points[closestPointIndex].x + dxNew;
                     points[closestPointIndex + 1].y = points[closestPointIndex].y + dyNew;
 
+                    //OTHER PTS DOESN'T ROTATE. WE SHOULD FIX ALL PTS HERE.
+                    
                     updateDraw(points, curvedIndexes, extraLengths, null, closestPointIndex, -1, true);
                 }
             }, 25);
