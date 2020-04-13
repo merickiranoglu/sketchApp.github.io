@@ -577,6 +577,20 @@ function enterEditMode() {
                 points[closestLineIndex + 1].x = points[closestLineIndex].x + dxNewNext;
                 points[closestLineIndex + 1].y = points[closestLineIndex].y + dyNewNext;
 
+                var distDiff = length - lineLength;
+                var dxOtherPts = distDiff * xRatio;
+                var dyOtherPts = distDiff * yRatio;
+
+                console.log("prev length = " + lineLength);
+                console.log("new length = " + length);
+
+                for (i = closestLineIndex + 1; i < points.length - 1; i++) {
+                    points[i + 1].x = points[i + 1].x + dxOtherPts;
+                    points[i + 1].y = points[i + 1].y + dyOtherPts;
+                }
+
+               
+
                 updateDraw(points, curvedIndexes, extraLengths, null, -1, closestLineIndex, true);
 
             }, 25);
