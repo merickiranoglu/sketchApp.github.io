@@ -16,7 +16,6 @@ two.clear();
 
 var points = [];
 var extraLengths = [];
-var curvedIndexes = [];
 var advancedEdit = false;
 var drawCurve = false;
 
@@ -43,22 +42,23 @@ lblDrawCurveMode.onclick = function (events) {
 }
 
 lblEditMode.onclick = function (events) {
-    advancedEdit = false;
+    advancedEdit = false;   
+    drawCurve = false;
     enterEditMode();
 }
 
 lblAdvancedEditMode.onclick = function (events) {
     advancedEdit = true;
+    drawCurve = false;
     enterAdvancedEditMode();
 }
 
 enterDrawLineMode();
 
-
 btnUndo.onclick = function (events) {
     points.pop();
     two.clear();
-    updateDraw(points, curvedIndexes, extraLengths);
+    updateDraw(points, extraLengths);
 }
 
 btnReset.onclick = function (events) {
@@ -81,14 +81,14 @@ document.getElementById("btnClosed").addEventListener('click', function () {
         btnClosed.style.backgroundImage = "url('img/circle-regular.svg')";
         points.pop();
     }
-    updateDraw(points, curvedIndexes, extraLengths);
+    updateDraw(points, extraLengths);
 
 }, false);
 
 btnClosed.onclick = function (events) {
 }
 
-function updateDraw(points, curvedIndexes = null, extraLengths = null, previewPoint = null, highlightPointIndex = -1, highlightLineIndex = -1, showTexts = false) {
+function updateDraw(points, extraLengths = null, previewPoint = null, highlightPointIndex = -1, highlightLineIndex = -1, showTexts = false) {
 
     var centerX = 0;
     var centerY = 0;
@@ -130,13 +130,13 @@ function updateDraw(points, curvedIndexes = null, extraLengths = null, previewPo
 
             points.push(curvePt);
 
-            var snappedPointX = findClosestPoint(previewPoint, LastPt, PtBeforeLastPt, true, false);
-            var snappedPointY = findClosestPoint(previewPoint, LastPt, PtBeforeLastPt, false, true);
+            // var snappedPointX = findClosestPoint(previewPoint, LastPt, PtBeforeLastPt, true, false);
+            // var snappedPointY = findClosestPoint(previewPoint, LastPt, PtBeforeLastPt, false, true);
 
-            var snappedPreviewPoint = previewPoint;
-            snappedPreviewPoint.x = snappedPointX
-            snappedPreviewPoint.y = snappedPointY
-            points.push(snappedPreviewPoint);
+            // var snappedPreviewPoint = previewPoint;
+            // snappedPreviewPoint.x = snappedPointX
+            // snappedPreviewPoint.y = snappedPointY
+            // points.push(snappedPreviewPoint);
         }
         else {
             points.push(previewPoint);
@@ -337,36 +337,36 @@ function updateDraw(points, curvedIndexes = null, extraLengths = null, previewPo
 
 
 
-        for (i = 0; i < points.length; i++) {
+        // for (i = 0; i < points.length; i++) {
 
 
-            if (points[i].command == "C")
-            {
-                var nextPt = points[i+1];
-                var pt = points[i];
+        //     if (points[i].command == "C")
+        //     {
+        //         var nextPt = points[i+1];
+        //         var pt = points[i];
     
-                var dxNext = nextPt.x - pt.x;
-                var dyNext = nextPt.y - pt.y;
-                var angleNext = Math.atan2(dyNext, dxNext);
+        //         var dxNext = nextPt.x - pt.x;
+        //         var dyNext = nextPt.y - pt.y;
+        //         var angleNext = Math.atan2(dyNext, dxNext);
     
-                if (angleNext < 0) { angleNext += Math.PI * 2; }
+        //         if (angleNext < 0) { angleNext += Math.PI * 2; }
     
-                if (angleNext < Math.PI / 2 * 3 && angleNext > Math.PI / 2) {
-                    angleNext += Math.PI;
-                }
+        //         if (angleNext < Math.PI / 2 * 3 && angleNext > Math.PI / 2) {
+        //             angleNext += Math.PI;
+        //         }
     
-                var dist = getDistance(pt, nextPt);
+        //         var dist = getDistance(pt, nextPt);
     
-                txtLocationX = getMidPtX(pt, nextPt) + Math.cos(angleNext + Math.PI / 2) * 10;
-                txtLocationY = getMidPtY(pt, nextPt) + Math.sin(angleNext + Math.PI / 2) * 10;
+        //         txtLocationX = getMidPtX(pt, nextPt) + Math.cos(angleNext + Math.PI / 2) * 10;
+        //         txtLocationY = getMidPtY(pt, nextPt) + Math.sin(angleNext + Math.PI / 2) * 10;
     
-                var txt = new Two.Text(Math.round(dist), txtLocationX, txtLocationY);
-                txt.rotation = angleNext;
-                two.add(txt);
-            }
+        //         var txt = new Two.Text(Math.round(dist), txtLocationX, txtLocationY);
+        //         txt.rotation = angleNext;
+        //         two.add(txt);
+        //     }
     
     
-        }
+        // }
 
     }
 
@@ -402,7 +402,7 @@ function enterDrawLineMode() {
     divSketch.classList.add("grid");
     btnUndo.disabled = false;
     btnClosed.disabled = false;
-    updateDraw(points, curvedIndexes, extraLengths);
+    updateDraw(points, extraLengths);
 
     canvas.ontouchend = function (ev) {
         ev.preventDefault();
@@ -416,7 +416,7 @@ function enterDrawLineMode() {
         else {
             points.push(new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line));
         }
-        updateDraw(points, curvedIndexes, extraLengths);
+        updateDraw(points, extraLengths);
     }
 
     canvas.ontouchmove = function (ev) {
@@ -428,7 +428,7 @@ function enterDrawLineMode() {
 
         if (points.length > 0) {
             two.clear();
-            updateDraw(points, curvedIndexes, extraLengths, previewPoint);
+            updateDraw(points, extraLengths, previewPoint);
             points.pop();
         }
     }
@@ -441,7 +441,7 @@ function enterDrawCurveMode() {
     divSketch.classList.add("grid");
     btnUndo.disabled = false;
     btnClosed.disabled = false;
-    updateDraw(points, curvedIndexes, extraLengths);
+    updateDraw(points, extraLengths);
 
     canvas.ontouchend = function (ev) {
         ev.preventDefault();
@@ -470,19 +470,19 @@ function enterDrawCurveMode() {
 
                 points.push(curvePt);
 
-                var mousePt = new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line);
+                // var mousePt = new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line);
 
-                var snappedPointX = findClosestPoint(mousePt, LastPt, PtBeforeLastPt, true, false);
-                var snappedPointY = findClosestPoint(mousePt, LastPt, PtBeforeLastPt, false, true);
+                // var snappedPointX = findClosestPoint(mousePt, LastPt, PtBeforeLastPt, true, false);
+                // var snappedPointY = findClosestPoint(mousePt, LastPt, PtBeforeLastPt, false, true);
 
-                var snappedPt = new Two.Anchor(snappedPointX, snappedPointY, 0, 0, 0, 0, Two.Commands.line);
-                points.push(snappedPt);
+                // var snappedPt = new Two.Anchor(snappedPointX, snappedPointY, 0, 0, 0, 0, Two.Commands.line);
+                // points.push(snappedPt);
             }
             else {
                 points.push(new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line));
             }
         }
-        updateDraw(points, curvedIndexes, extraLengths);
+        updateDraw(points, extraLengths);
     }
 
     canvas.ontouchmove = function (ev) {
@@ -494,11 +494,11 @@ function enterDrawCurveMode() {
 
         if (points.length > 0) {
             two.clear();
-            updateDraw(points, curvedIndexes, extraLengths, previewPoint);
+            updateDraw(points, extraLengths, previewPoint);
             points.pop();
-            if (drawCurve) {
-                points.pop();
-            }
+            // if (drawCurve) {
+            //     points.pop();
+            // }
         }
     }
 
@@ -511,7 +511,7 @@ function enterEditMode() {
     btnClosed.disabled = true;
     divSketch.classList.remove("grid");
 
-    updateDraw(points, curvedIndexes, extraLengths, null, -1, -1, true);
+    updateDraw(points, extraLengths, null, -1, -1, true);
 
     canvas.ontouchmove = function (ev) {
 
@@ -552,7 +552,7 @@ function enterEditMode() {
         two.clear();
 
         if (minDistToLine < minDistToPoint) {
-            updateDraw(points, curvedIndexes, extraLengths, null, -1, closestLineIndex, true);
+            updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
 
             setTimeout(function () {
@@ -577,25 +577,25 @@ function enterEditMode() {
                 points[closestLineIndex + 1].x = points[closestLineIndex].x + dxNewNext;
                 points[closestLineIndex + 1].y = points[closestLineIndex].y + dyNewNext;
 
-                var distDiff = length - lineLength;
-                var dxOtherPts = distDiff * xRatio;
-                var dyOtherPts = distDiff * yRatio;
+                // var distDiff = length - lineLength;
+                // var dxOtherPts = distDiff * xRatio;
+                // var dyOtherPts = distDiff * yRatio;
 
-                console.log("prev length = " + lineLength);
-                console.log("new length = " + length);
+                // console.log("prev length = " + lineLength);
+                // console.log("new length = " + length);
 
-                for (i = closestLineIndex + 1; i < points.length - 1; i++) {
-                    points[i + 1].x = points[i + 1].x + dxOtherPts;
-                    points[i + 1].y = points[i + 1].y + dyOtherPts;
-                }
+                // for (i = closestLineIndex + 1; i < points.length - 1; i++) {
+                //     points[i + 1].x = points[i + 1].x + dxOtherPts;
+                //     points[i + 1].y = points[i + 1].y + dyOtherPts;
+                // }
 
-                updateDraw(points, curvedIndexes, extraLengths, null, -1, closestLineIndex, true);
+                updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
             }, 25);
         }
         else {
 
-            updateDraw(points, curvedIndexes, extraLengths, null, closestPointIndex, -1, true);
+            updateDraw(points, extraLengths, null, closestPointIndex, -1, true);
             setTimeout(function () {
 
                 var pt = points[closestPointIndex];
@@ -654,7 +654,7 @@ function enterEditMode() {
 
                     //OTHER PTS DOESN'T ROTATE. WE SHOULD FIX ALL PTS HERE.
                     
-                    updateDraw(points, curvedIndexes, extraLengths, null, closestPointIndex, -1, true);
+                    updateDraw(points, extraLengths, null, closestPointIndex, -1, true);
                 }
             }, 25);
         }
@@ -669,7 +669,7 @@ function enterAdvancedEditMode() {
     btnClosed.disabled = true;
     divSketch.classList.remove("grid");
 
-    updateDraw(points, curvedIndexes, extraLengths, null, -1, -1, true);
+    updateDraw(points, extraLengths, null, -1, -1, true);
 
 
     canvas.ontouchmove = function (ev) {
@@ -701,7 +701,7 @@ function enterAdvancedEditMode() {
 
         two.clear();
 
-        updateDraw(points, curvedIndexes, extraLengths, null, -1, closestLineIndex, true);
+        updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
         setTimeout(function () {
             var lineLength = getDistance(points[closestLineIndex], points[closestLineIndex + 1]);
@@ -710,7 +710,7 @@ function enterAdvancedEditMode() {
             if (length == null) { length = extraLengths[closestLineIndex]; }
             extraLengths[closestLineIndex] = length;
 
-            updateDraw(points, curvedIndexes, extraLengths, null, -1, closestLineIndex, true);
+            updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
         }, 25);
 
