@@ -18,16 +18,16 @@ var points = [];
 var extraLengths = [];
 var advancedEdit = false;
 var drawCurve = false;
-
-btnDrawLineMode.click();
-
+let isPolygonClosed = false;
 
 for (i = 0; i < 100; i++) {
     extraLengths.push(0);
 }
 var inputLineCounter = 1;
 var inputPointCounter = 1;
-let isPolygonClosed = false;
+
+enterDrawLineMode();
+two.play()
 
 lblDrawLineMode.onclick = function (events) {
     advancedEdit = false;
@@ -42,7 +42,7 @@ lblDrawCurveMode.onclick = function (events) {
 }
 
 lblEditMode.onclick = function (events) {
-    advancedEdit = false;   
+    advancedEdit = false;
     drawCurve = false;
     enterEditMode();
 }
@@ -53,7 +53,6 @@ lblAdvancedEditMode.onclick = function (events) {
     enterAdvancedEditMode();
 }
 
-enterDrawLineMode();
 
 btnUndo.onclick = function (events) {
     points.pop();
@@ -68,6 +67,8 @@ btnReset.onclick = function (events) {
     points = [];
     enterDrawLineMode();
 }
+
+;
 
 document.getElementById("btnClosed").addEventListener('click', function () {
 
@@ -295,8 +296,7 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
                     nextPt = points[i + 1];
                 }
 
-                if (nextPt.command == "C" || pt.command == "C")
-                {
+                if (nextPt.command == "C" || pt.command == "C") {
                     continue;
                 }
 
@@ -344,58 +344,34 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
         //     {
         //         var nextPt = points[i+1];
         //         var pt = points[i];
-    
+
         //         var dxNext = nextPt.x - pt.x;
         //         var dyNext = nextPt.y - pt.y;
         //         var angleNext = Math.atan2(dyNext, dxNext);
-    
+
         //         if (angleNext < 0) { angleNext += Math.PI * 2; }
-    
+
         //         if (angleNext < Math.PI / 2 * 3 && angleNext > Math.PI / 2) {
         //             angleNext += Math.PI;
         //         }
-    
+
         //         var dist = getDistance(pt, nextPt);
-    
+
         //         txtLocationX = getMidPtX(pt, nextPt) + Math.cos(angleNext + Math.PI / 2) * 10;
         //         txtLocationY = getMidPtY(pt, nextPt) + Math.sin(angleNext + Math.PI / 2) * 10;
-    
+
         //         var txt = new Two.Text(Math.round(dist), txtLocationX, txtLocationY);
         //         txt.rotation = angleNext;
         //         two.add(txt);
         //     }
-    
-    
+
+
         // }
 
     }
 
 
 }
-
-
-function drawGrid(gridSize) {
-    x = 0;
-    y = 0;
-
-    while (y + gridSize < canvas.height) {
-        var l = new Two.Line(0, y, canvas.width, y);
-        l.linewidth = 0.2;
-        l.stroke = "black";
-        two.add(l);
-        y += gridSize;
-    }
-
-    while (x + gridSize < canvas.width) {
-        var l = new Two.Line(x, 0, x, canvas.height);
-        l.linewidth = 0.2;
-        l.stroke = "black";
-        two.add(l);
-        x += gridSize;
-    }
-
-}
-
 
 function enterDrawLineMode() {
     console.log("Draw Line Mode activated.");
@@ -652,8 +628,6 @@ function enterEditMode() {
                     points[closestPointIndex + 1].x = points[closestPointIndex].x + dxNew;
                     points[closestPointIndex + 1].y = points[closestPointIndex].y + dyNew;
 
-                    //OTHER PTS DOESN'T ROTATE. WE SHOULD FIX ALL PTS HERE.
-                    
                     updateDraw(points, extraLengths, null, closestPointIndex, -1, true);
                 }
             }, 25);
@@ -671,11 +645,8 @@ function enterAdvancedEditMode() {
 
     updateDraw(points, extraLengths, null, -1, -1, true);
 
-
     canvas.ontouchmove = function (ev) {
-
     }
-
 
     canvas.ontouchend = function (ev) {
         ev.preventDefault();
@@ -717,6 +688,3 @@ function enterAdvancedEditMode() {
     }
 }
 
-
-
-two.play();

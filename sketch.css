@@ -65,19 +65,6 @@ div {
     background-repeat: no-repeat;
 }
 
-#lblLine {
-    background-image : url("img/window-minimize-regular.svg");
-    background-position : center center;
-    background-repeat:no-repeat;
-}
-
-#lblCurve {
-    background-image : url("img/cuttlefish-brands.svg");
-    background-position : center center;
-    background-repeat:no-repeat;
-}
-
-
 
 #grpModes {
     width : 200px;
