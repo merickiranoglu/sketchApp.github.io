@@ -1,3 +1,7 @@
+//settings
+var showLengthsAndAnglesOnDrawMode = false;
+//
+
 const two = new Two
     ({
         fullscreen: true,
@@ -8,15 +12,16 @@ two.appendTo(divSketch);
 const canvas = divSketch.getElementsByTagName('canvas')[0];
 
 divSketch.style["width"] = "100%";
-divSketch.style["height"] = "95%";
-divSketch.style["border"] = "2px solid black";
-var gridSize = 10;
+divSketch.style["height"] = "80%";
+grpEditExtra.style.display = "none";
+var gridSize = 20;
 
 two.clear();
 
 var points = [];
+var arrow = null;
 var extraLengths = [];
-var advancedEdit = false;
+var showExtraLengths = false;
 var drawCurve = false;
 let isPolygonClosed = false;
 
@@ -30,34 +35,34 @@ enterDrawLineMode();
 two.play()
 
 lblDrawLineMode.onclick = function (events) {
-    advancedEdit = false;
+    showExtraLengths = false;
     drawCurve = false;
+    grpEditExtra.style.display = "none";
+    divSketch.style["height"] = "80%";
     enterDrawLineMode();
 }
 
 lblDrawCurveMode.onclick = function (events) {
-    advancedEdit = false;
+    showExtraLengths = false;
     drawCurve = true;
+    grpEditExtra.style.display = "none";
+    divSketch.style["height"] = "80%";
     enterDrawCurveMode();
 }
 
 lblEditMode.onclick = function (events) {
-    advancedEdit = false;
     drawCurve = false;
+    divSketch.style["height"] = "70%";
+    grpEditExtra.style.display = "inline-flex";
     enterEditMode();
 }
 
 lblAdvancedEditMode.onclick = function (events) {
-    advancedEdit = true;
+    showExtraLengths = true;
     drawCurve = false;
+    divSketch.style["height"] = "80%";
+    grpEditExtra.style.display = "none";
     enterAdvancedEditMode();
-}
-
-
-btnUndo.onclick = function (events) {
-    points.pop();
-    two.clear();
-    updateDraw(points, extraLengths);
 }
 
 btnReset.onclick = function (events) {
@@ -65,26 +70,56 @@ btnReset.onclick = function (events) {
     inputLineCounter = 1;
     inputPointCounter = 1;
     points = [];
+    arrow = null;
     enterDrawLineMode();
 }
 
-;
+btnArrow1.onclick = function (ev) {
 
-document.getElementById("btnClosed").addEventListener('click', function () {
+    lblArrow1.classList.add("active");
+    lblArrow2.classList.remove("active");
 
-    if (isPolygonClosed == false) {
-        isPolygonClosed = true;
-        btnClosed.style.backgroundImage = "url('img/circle-notch-solid.svg')";
-        points.push(new Two.Anchor(points[0].x, points[0].y, 0, 0, 0, 0, Two.Commands.line));
+    canvas.ontouchend = function (ev) {
+        ev.preventDefault();
+        let x = ev.changedTouches[0].pageX;
+        let y = ev.changedTouches[0].pageY;
+        two.clear();
+        arrow = new Two.Sprite('https://i.imgur.com/MfrzZL5.png', x, y);
+        arrow.scale = 0.05;
+        updateDraw(points, extraLengths, null, -1, -1, true);
     }
-    else if (isPolygonClosed == true) {
-        isPolygonClosed = false;
-        btnClosed.style.backgroundImage = "url('img/circle-regular.svg')";
-        points.pop();
-    }
-    updateDraw(points, extraLengths);
 
-}, false);
+    canvas.ontouchmove = function (ev) {
+    }
+}
+
+btnArrow2.onclick = function (ev) {
+
+    lblArrow1.classList.remove("active");
+    lblArrow2.classList.add("active");
+
+    canvas.ontouchend = function (ev) {
+        ev.preventDefault();
+        let x = ev.changedTouches[0].pageX;
+        let y = ev.changedTouches[0].pageY;
+        two.clear();
+        arrow = new Two.Sprite('https://i.imgur.com/Qzte734.png', x, y);
+        arrow.scale = 0.05;
+        updateDraw(points, extraLengths, null, -1, -1, true);
+    }
+
+    canvas.ontouchmove = function (ev) {
+    }
+}
+
+btnExport.onclick = function (ev) {
+    var dataURL = canvas.toDataURL('img/png');
+    localStorage.setItem('imgDataURL', dataURL);
+    localStorage.setItem('canvasWidth', canvas.style.width);
+    localStorage.setItem('canvasHeight', canvas.style.height);
+    localStorage.setItem('points', JSON.stringify(points));
+    window.location.href = 'nextPage.html';
+}
 
 btnClosed.onclick = function (events) {
 }
@@ -123,21 +158,38 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
             var dy = LastPt.y - PtBeforeLastPt.y;
             var angle = Math.atan2(dy, dx);
 
-            angle = angle + Math.PI / 2;
-
-            var curvePtX = LastPt.x + 20 * Math.cos(angle);
-            var curvePtY = LastPt.y + 20 * Math.sin(angle);
-            var curvePt = new Two.Anchor(curvePtX, curvePtY, -20, -20, 0, -20, Two.Commands.curve);
-
-            points.push(curvePt);
-
-            // var snappedPointX = findClosestPoint(previewPoint, LastPt, PtBeforeLastPt, true, false);
-            // var snappedPointY = findClosestPoint(previewPoint, LastPt, PtBeforeLastPt, false, true);
-
-            // var snappedPreviewPoint = previewPoint;
-            // snappedPreviewPoint.x = snappedPointX
-            // snappedPreviewPoint.y = snappedPointY
-            // points.push(snappedPreviewPoint);
+            if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
+                if (previewPoint.x > LastPt.x) {
+                    angle = angle + Math.PI / 2;
+                    var curvePtX = LastPt.x - 20 * Math.cos(angle) * Math.sign(dx);
+                    var curvePtY = LastPt.y - 20 * Math.sin(angle) * Math.sign(dx);
+                    var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                    points.push(curvePt);
+                }
+                else {
+                    angle = angle - Math.PI / 2;
+                    var curvePtX = LastPt.x - 20 * Math.cos(angle) * Math.sign(dx);
+                    var curvePtY = LastPt.y - 20 * Math.sin(angle) * Math.sign(dx);
+                    var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                    points.push(curvePt);
+                }
+            }
+            else {
+                if (previewPoint.x > LastPt.x) {
+                    angle = angle + Math.PI / 2;
+                    var curvePtX = LastPt.x + 20 * Math.cos(angle) * Math.sign(dx);
+                    var curvePtY = LastPt.y + 20 * Math.sin(angle) * Math.sign(dx);
+                    var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                    points.push(curvePt);
+                }
+                else {
+                    angle = angle - Math.PI / 2;
+                    var curvePtX = LastPt.x + 20 * Math.cos(angle) * Math.sign(dx);
+                    var curvePtY = LastPt.y + 20 * Math.sin(angle) * Math.sign(dx);
+                    var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                    points.push(curvePt);
+                }
+            }
         }
         else {
             points.push(previewPoint);
@@ -149,7 +201,6 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
         var pt = points[i];
         var nextPt = points[i + 1];
 
-
         if (nextPt.command == "C") {
 
             var prevPt = points[i - 1];
@@ -158,22 +209,27 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
             var dy = pt.y - prevPt.y;
             var angle = Math.atan2(dy, dx);
 
+            var dxNext = nextPt.x - pt.x;
+            var dyNext = nextPt.y - pt.y;
+
             var xx = 20 * Math.cos(angle);
             var yy = 20 * Math.sin(angle);
-
             var curve = two.makeCurve(pt.x, pt.y, getMidPtX(pt, nextPt) + xx, getMidPtY(pt, nextPt) + yy, nextPt.x, nextPt.y, true);
-            curve.stroke = "black";
+            curve.stroke = "#0f426f";
             curve.noFill();
             curve.linewidth = 3;
+
+
+
         }
         else //line
         {
             let line = new Two.Line(pt.x, pt.y, nextPt.x, nextPt.y);
             if (i == highlightLineIndex) {
-                line.stroke = "red"
+                line.stroke = "#d58127"
             }
             else {
-                line.stroke = "black"
+                line.stroke = "#0f426f"
             }
             line.linewidth = 3;
             two.add(line);
@@ -181,23 +237,23 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
     }
 
     let ptMarkCenter = new Two.Circle(centerX, centerY, 2);
-    ptMarkCenter.fill = "red";
-    ptMarkCenter.stroke = "red";
+    ptMarkCenter.fill = "#d58127";
+    ptMarkCenter.stroke = "#d58127";
     ptMarkCenter.linewidth = 2;
     // two.add(ptMarkCenter);
 
     for (i = 0; i < points.length; i++) {
         if (i == highlightPointIndex) {
             let ptMark = new Two.Circle(points[i].x, points[i].y, 8);
-            ptMark.fill = "red";
-            ptMark.stroke = "red";
+            ptMark.fill = "#d58127";
+            ptMark.stroke = "#d58127";
             ptMark.linewidth = 3;
             two.add(ptMark);
         }
         else {
             let ptMark = new Two.Circle(points[i].x, points[i].y, 4);
-            ptMark.fill = "black";
-            ptMark.stroke = "black";
+            ptMark.fill = "#0f426f";
+            ptMark.stroke = "#0f426f";
             ptMark.linewidth = 3;
             two.add(ptMark);
         }
@@ -261,7 +317,7 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
             txt.rotation = angleNext;
             two.add(txt);
 
-            if (advancedEdit && extraLengths != null) {
+            if (showExtraLengths && extraLengths != null) {
                 var extratxt = new Two.Text("(" + extraLengths[i] + ")", advancedEdittxtLocationX, advancedEdittxtLocationY);
 
                 extratxt.rotation = angleNext;
@@ -314,7 +370,7 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
 
                 var arc = two.makeArcSegment(pt.x, pt.y, 0, 20, anglePrev, angleNext)
                 if (i == highlightPointIndex) {
-                    arc.fill = "red";
+                    arc.fill = "#d58127";
                 }
                 else {
                     arc.fill = "white";
@@ -370,6 +426,7 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
 
     }
 
+    two.add(arrow);
 
 }
 
@@ -378,7 +435,23 @@ function enterDrawLineMode() {
     divSketch.classList.add("grid");
     btnUndo.disabled = false;
     btnClosed.disabled = false;
-    updateDraw(points, extraLengths);
+    if (showLengthsAndAnglesOnDrawMode) {
+        updateDraw(points, extraLengths, null, -1, -1, true);
+    }
+    else {
+        updateDraw(points, extraLengths);
+    }
+
+    btnUndo.onclick = function (events) {
+        points.pop();
+        two.clear();
+        if (showLengthsAndAnglesOnDrawMode) {
+            updateDraw(points, extraLengths, null, -1, -1, true);
+        }
+        else {
+            updateDraw(points, extraLengths);
+        }
+    }
 
     canvas.ontouchend = function (ev) {
         ev.preventDefault();
@@ -392,7 +465,13 @@ function enterDrawLineMode() {
         else {
             points.push(new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line));
         }
-        updateDraw(points, extraLengths);
+
+        if (showLengthsAndAnglesOnDrawMode) {
+            updateDraw(points, extraLengths, null, -1, -1, true);
+        }
+        else {
+            updateDraw(points, extraLengths);
+        }
     }
 
     canvas.ontouchmove = function (ev) {
@@ -404,12 +483,15 @@ function enterDrawLineMode() {
 
         if (points.length > 0) {
             two.clear();
-            updateDraw(points, extraLengths, previewPoint);
+            if (showLengthsAndAnglesOnDrawMode) {
+                updateDraw(points, extraLengths, previewPoint, -1, -1, true);
+            }
+            else {
+                updateDraw(points, extraLengths, previewPoint);
+            }
             points.pop();
         }
     }
-
-    // btnUndo.style.display = "inline";
 }
 
 function enterDrawCurveMode() {
@@ -417,7 +499,24 @@ function enterDrawCurveMode() {
     divSketch.classList.add("grid");
     btnUndo.disabled = false;
     btnClosed.disabled = false;
-    updateDraw(points, extraLengths);
+
+    if (showLengthsAndAnglesOnDrawMode) {
+        updateDraw(points, extraLengths, null, -1, -1, true);
+    }
+    else {
+        updateDraw(points, extraLengths);
+    }
+
+    btnUndo.onclick = function (events) {
+        points.pop();
+        two.clear();
+        if (showLengthsAndAnglesOnDrawMode) {
+            updateDraw(points, extraLengths, null, -1, -1, true);
+        }
+        else {
+            updateDraw(points, extraLengths);
+        }
+    }
 
     canvas.ontouchend = function (ev) {
         ev.preventDefault();
@@ -438,27 +537,50 @@ function enterDrawCurveMode() {
                 var dy = LastPt.y - PtBeforeLastPt.y;
                 var angle = Math.atan2(dy, dx);
 
-                angle = angle + Math.PI / 2;
-
-                var curvePtX = LastPt.x + 20 * Math.cos(angle);
-                var curvePtY = LastPt.y + 20 * Math.sin(angle);
-                var curvePt = new Two.Anchor(curvePtX, curvePtY, -20, -20, 0, -20, Two.Commands.curve);
-
-                points.push(curvePt);
-
-                // var mousePt = new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line);
-
-                // var snappedPointX = findClosestPoint(mousePt, LastPt, PtBeforeLastPt, true, false);
-                // var snappedPointY = findClosestPoint(mousePt, LastPt, PtBeforeLastPt, false, true);
-
-                // var snappedPt = new Two.Anchor(snappedPointX, snappedPointY, 0, 0, 0, 0, Two.Commands.line);
-                // points.push(snappedPt);
+                if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
+                    if (x > LastPt.x) {
+                        angle = angle + Math.PI / 2;
+                        var curvePtX = LastPt.x - 20 * Math.cos(angle) * Math.sign(dx);
+                        var curvePtY = LastPt.y - 20 * Math.sin(angle) * Math.sign(dx);
+                        var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                        points.push(curvePt);
+                    }
+                    else {
+                        angle = angle - Math.PI / 2;
+                        var curvePtX = LastPt.x - 20 * Math.cos(angle) * Math.sign(dx);
+                        var curvePtY = LastPt.y - 20 * Math.sin(angle) * Math.sign(dx);
+                        var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                        points.push(curvePt);
+                    }
+                }
+                else {
+                    if (x > LastPt.x) {
+                        angle = angle + Math.PI / 2;
+                        var curvePtX = LastPt.x + 20 * Math.cos(angle) * Math.sign(dx);
+                        var curvePtY = LastPt.y + 20 * Math.sin(angle) * Math.sign(dx);
+                        var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                        points.push(curvePt);
+                    }
+                    else {
+                        angle = angle - Math.PI / 2;
+                        var curvePtX = LastPt.x + 20 * Math.cos(angle) * Math.sign(dx);
+                        var curvePtY = LastPt.y + 20 * Math.sin(angle) * Math.sign(dx);
+                        var curvePt = new Two.Anchor(curvePtX, curvePtY, 20, 20, 0, 20, Two.Commands.curve);
+                        points.push(curvePt);
+                    }
+                }
             }
             else {
                 points.push(new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line));
             }
         }
-        updateDraw(points, extraLengths);
+
+        if (showLengthsAndAnglesOnDrawMode) {
+            updateDraw(points, extraLengths, null, -1, -1, true);
+        }
+        else {
+            updateDraw(points, extraLengths);
+        }
     }
 
     canvas.ontouchmove = function (ev) {
@@ -470,27 +592,36 @@ function enterDrawCurveMode() {
 
         if (points.length > 0) {
             two.clear();
-            updateDraw(points, extraLengths, previewPoint);
+
+            if (showLengthsAndAnglesOnDrawMode) {
+                updateDraw(points, extraLengths, previewPoint, -1, -1, true);
+            }
+            else {
+                updateDraw(points, extraLengths, previewPoint);
+            }
+
             points.pop();
-            // if (drawCurve) {
-            //     points.pop();
-            // }
         }
     }
 
-    // btnUndo.style.display = "inline";
+    btnUndo.style.display = "inline";
 }
 
 function enterEditMode() {
     console.log("Edit mode activated.");
-    btnUndo.disabled = true;
+    btnUndo.disabled = false;
     btnClosed.disabled = true;
     divSketch.classList.remove("grid");
 
     updateDraw(points, extraLengths, null, -1, -1, true);
 
-    canvas.ontouchmove = function (ev) {
+    btnUndo.onclick = function (events) {
+        two.clear();
+        arrow = null;
+        updateDraw(points, extraLengths, null, -1, -1, true);
+    }
 
+    canvas.ontouchmove = function (ev) {
     }
 
     canvas.ontouchend = function (ev) {
@@ -553,17 +684,17 @@ function enterEditMode() {
                 points[closestLineIndex + 1].x = points[closestLineIndex].x + dxNewNext;
                 points[closestLineIndex + 1].y = points[closestLineIndex].y + dyNewNext;
 
-                // var distDiff = length - lineLength;
-                // var dxOtherPts = distDiff * xRatio;
-                // var dyOtherPts = distDiff * yRatio;
+                var distDiff = length - lineLength;
+                var dxOtherPts = distDiff * xRatio;
+                var dyOtherPts = distDiff * yRatio;
 
-                // console.log("prev length = " + lineLength);
-                // console.log("new length = " + length);
+                console.log("prev length = " + lineLength);
+                console.log("new length = " + length);
 
-                // for (i = closestLineIndex + 1; i < points.length - 1; i++) {
-                //     points[i + 1].x = points[i + 1].x + dxOtherPts;
-                //     points[i + 1].y = points[i + 1].y + dyOtherPts;
-                // }
+                for (i = closestLineIndex + 1; i < points.length - 1; i++) {
+                    points[i + 1].x = points[i + 1].x + dxOtherPts;
+                    points[i + 1].y = points[i + 1].y + dyOtherPts;
+                }
 
                 updateDraw(points, extraLengths, null, -1, closestLineIndex, true);
 
@@ -616,6 +747,8 @@ function enterEditMode() {
 
                     console.clear();
 
+                    if (angleDiff < 0) { angleDiff = angleDiff + 360 }
+
                     var newAngle = prompt("Please enter new angle:", Math.round(angleDiff, 2));
 
                     if (newAngle == null) { newAngle = angleDiff; }
@@ -644,6 +777,12 @@ function enterAdvancedEditMode() {
     divSketch.classList.remove("grid");
 
     updateDraw(points, extraLengths, null, -1, -1, true);
+
+    btnUndo.onclick = function (events) {
+        arrow = null;
+        two.clear();
+        updateDraw(points, extraLengths, null, -1, -1, true);
+    }
 
     canvas.ontouchmove = function (ev) {
     }
@@ -676,7 +815,7 @@ function enterAdvancedEditMode() {
 
         setTimeout(function () {
             var lineLength = getDistance(points[closestLineIndex], points[closestLineIndex + 1]);
-            var length = prompt("Please enter EXTRA length:", extraLengths[closestLineIndex]);
+            var length = prompt("Please enter 3D length:", extraLengths[closestLineIndex]);
 
             if (length == null) { length = extraLengths[closestLineIndex]; }
             extraLengths[closestLineIndex] = length;
@@ -687,4 +826,3 @@ function enterAdvancedEditMode() {
 
     }
 }
-

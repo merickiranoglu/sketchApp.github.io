@@ -20,19 +20,33 @@
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
 
-  <link rel="stylesheet" href="sketch.css">
+  <link rel="stylesheet" href="style.css">
 
-  <title>Meriç Kıranoğlu</title>
+  <title>Tegneapp</title>
 </head>
 
 <body class="bodyhome">
+  <div class="top">
+    <div class="logo"><a href="/"><img src="img/lieblikk_logo.png" /></a></div>
+  </div>
 
 
   <div id="divSketch" class="rounded grid">
   </div>
 
+    <div class="btn-group btn-group-toggle" id="grpEditExtra" data-toggle="arrowButtons">
+      <label class="btn btn-primary" id="lblColorSide">
+      Choose color side:</label>
+      <label class="btn btn-primary" id="lblArrow1">
+        <input type="radio" name="options" id="btnArrow1">
+      </label>
+      <label class="btn btn-primary" id="lblArrow2">
+        <input type="radio" name="options" id="btnArrow2">
+      </label>
+    </div>
+  
   <div class="btn-group btn-group-toggle" id="grpModes" data-toggle="buttons">
-    <label class="btn btn-primary" id="lblDrawLineMode">
+    <label class="btn btn-primary active" id="lblDrawLineMode">
       <input type="radio" name="options" id="btnDrawLineMode">
     </label>
     <label class="btn btn-primary" id="lblDrawCurveMode">
@@ -51,12 +65,13 @@
     <button type="button" class="btn btn-primary" id="btnUndo"></button>
     <button type="button" class="btn btn-primary" id="btnClosed"></button>
     <button type="button" class="btn btn-primary" id="btnReset"></button>
+    <button type="button" class="btn btn-primary" id="btnExport"></button>
   </div>
 
 
 </body>
-<script src="two.js"></script>
-<script src="geometry.js"></script>
-<script src="sketch.js"></script>
+<script src="js/two.js"></script>
+<script src="js/geometry.js"></script>
+<script src="js/sketch.js"></script>
 
 </html>

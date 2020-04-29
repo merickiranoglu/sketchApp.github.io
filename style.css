@@ -1,0 +1,224 @@
+/*
+Theme Name: Lieblikk
+Theme URI: http: //mysite.com/
+Description: Hnepp
+Author: Birgithe Solstrand
+*/
+
+#divSketch {
+    background-color: rgb(255, 255, 255);
+}
+
+canvas {
+    padding: 0px;
+}
+
+div {
+    padding: 0px;
+    margin: 0px;
+}
+
+.grid{
+    background:
+        linear-gradient(-90deg, rgba(0,0,0,0.20) 1px, transparent 1px),
+        linear-gradient(rgba(0,0,0,.20) 1px, transparent 1px);
+     background-size:
+        20px 20px,
+        20px 20px;
+}
+
+#btnProceedToScreen2 {
+    float: right;
+}
+
+#lblDrawLineMode {
+    background-image : url("img/line_tool.png");
+    background-position : center center;
+    background-repeat: no-repeat;
+    background-size: 20px;
+}
+
+#lblDrawLineMode.active {
+  background-image : url("img/line_tool_active.png");
+}
+
+#lblDrawCurveMode {
+    background-image : url("img/0_degree_tool.png");
+    background-position : center center;
+    background-repeat: no-repeat;
+    background-size: 20px;
+}
+
+#lblDrawCurveMode.active {
+  background-image: url("img/0_degree_tool_active.png");
+}
+
+#lblEditMode {
+    background-image : url("img/edit.png");
+    background-position : center center;
+    background-repeat:no-repeat;
+    background-size: 20px;
+}
+
+#lblEditMode.active {
+  background-image: url("img/edit_active.png");
+}
+
+#lblAdvancedEditMode {
+    background-image : url("img/advanced_edit_mode.png");
+    background-position : center center;
+    background-repeat:no-repeat;
+    background-size: 20px;
+}
+
+#lblAdvancedEditMode.active {
+  background-image : url("img/advanced_edit_mode_active.png");
+}
+
+#btnUndo {
+    background-image : url("img/undo.png");
+    background-position : center center;
+    background-repeat:no-repeat;
+    background-size: 20px;
+}
+
+#btnUndo.active {
+  background-image: url("img/undo_active.png");
+}
+
+#btnReset {
+    background-image : url("img/file-regular.svg");
+    background-position : center center;
+    background-repeat: no-repeat;
+}
+
+
+#grpModes {
+    width : 100%;
+    height : 10%;
+}
+
+#grpEditExtra {
+  width : 100%;
+  height : 10%;
+  background-color: #cf8729;
+}
+
+#btnUndo {
+    width : 35px;
+    height : 25px;
+}
+
+#btnReset {
+    width : 35px;
+    height : 25px;
+}
+
+#btnExport {
+  width : 35px;
+  height : 25px;
+}
+
+
+#btnClosed {
+    width : 35px;
+    height : 25px;
+    background-image : url("img/circle-regular.svg");
+    background-position : center center;
+    background-repeat: no-repeat;
+}
+
+.btn-group>.btn-group:not(:last-child)>.btn,
+.btn-group>.btn:not(:last-child):not(.dropdown-toggle),
+.btn-group-toggle>.btn,
+.btn {
+  border: 0;
+  border-radius: 0;
+}
+
+.btn-primary.disabled, .btn-primary:disabled,
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show>.btn-primary.dropdown-toggle,
+.btn-primary {
+  background-color: #0f426f;
+}
+
+#lblDrawLineMode {
+  background-image : url("img/line_tool.png");
+  background-position : center center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+}
+
+#lblDrawLineMode.active {
+background-image : url("img/line_tool_active.png");
+}
+
+#lblArrow1 {
+  background-image : url("img/arrow_up_active.png");
+  background-color: #da771c;
+  background-position : center center;
+  background-repeat:no-repeat;
+  background-size: 20px;
+  width: 25%;
+
+}
+
+#lblArrow2 {
+  background-image : url("img/arrow_down_active.png");
+  background-color: #da771c;
+  background-position : center center;
+  background-repeat:no-repeat;
+  background-size: 20px;
+  width: 25%;
+}
+
+#lblColorSide {
+  background-color: #da771c;
+  font-size: 18px;
+  width: 50%;
+  padding-top: 25px;
+}
+
+#btnArrow1 {
+  width : 35px;
+  height : 25px;
+}
+
+#btnArrow2 {
+  width : 35px;
+    height : 25px;
+}
+
+.logo img {
+  width: 50%;
+  margin: 0 auto;
+  display: block;
+  padding-top: 15px;
+}
+
+.top {
+  height: 10%;
+  background-color: #e7e7e7;
+  z-index: 1;
+  position: relative;
+}
+
+#grpModes2 {
+  position: absolute;
+  top: 10%;
+  height: auto;
+  right: 0;
+  flex-direction: column;
+  padding: 10px;
+  background-color:  #0f426f;
+}
+
+#grpModes2 .btn.btn-primary {
+  margin: 10px 0;
+}
+
+#btnClosed {
+  display: none;
+}
