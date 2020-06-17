@@ -1,7 +1,3 @@
-//settings
-var showLengthsAndAnglesOnDrawMode = false;
-//
-
 const two = new Two
     ({
         fullscreen: true,
@@ -12,8 +8,8 @@ two.appendTo(divSketch);
 const canvas = divSketch.getElementsByTagName('canvas')[0];
 
 divSketch.style["width"] = "100%";
-divSketch.style["height"] = "80%";
-grpEditExtra.style.display = "none";
+divSketch.style["height"] = "90%";
+// grpEditExtra.style.display = "none";
 var gridSize = 20;
 
 two.clear();
@@ -21,7 +17,7 @@ two.clear();
 var points = [];
 var arrow = null;
 var extraLengths = [];
-var showExtraLengths = false;
+var advancedEdit = false;
 var drawCurve = false;
 let isPolygonClosed = false;
 
@@ -35,33 +31,30 @@ enterDrawLineMode();
 two.play()
 
 lblDrawLineMode.onclick = function (events) {
-    showExtraLengths = false;
+    advancedEdit = false;
     drawCurve = false;
-    grpEditExtra.style.display = "none";
-    divSketch.style["height"] = "80%";
+    // grpEditExtra.style.display = "none";
     enterDrawLineMode();
 }
 
 lblDrawCurveMode.onclick = function (events) {
-    showExtraLengths = false;
+    advancedEdit = false;
     drawCurve = true;
-    grpEditExtra.style.display = "none";
-    divSketch.style["height"] = "80%";
+    // grpEditExtra.style.display = "none";
     enterDrawCurveMode();
 }
 
 lblEditMode.onclick = function (events) {
+    advancedEdit = false;
     drawCurve = false;
-    divSketch.style["height"] = "70%";
-    grpEditExtra.style.display = "inline-flex";
+    // grpEditExtra.style.display = "inline-flex";
     enterEditMode();
 }
 
 lblAdvancedEditMode.onclick = function (events) {
-    showExtraLengths = true;
+    advancedEdit = true;
     drawCurve = false;
-    divSketch.style["height"] = "80%";
-    grpEditExtra.style.display = "none";
+    // grpEditExtra.style.display = "none";
     enterAdvancedEditMode();
 }
 
@@ -74,52 +67,64 @@ btnReset.onclick = function (events) {
     enterDrawLineMode();
 }
 
-btnArrow1.onclick = function (ev) {
+// btnArrow1.onclick = function (ev) {
 
-    lblArrow1.classList.add("active");
-    lblArrow2.classList.remove("active");
+//     canvas.ontouchend = function (ev) {
+//         ev.preventDefault();
+//         let x = ev.changedTouches[0].pageX;
+//         let y = ev.changedTouches[0].pageY;
+//         two.clear();
+//         arrow = new Two.Sprite('https://i.imgur.com/MfrzZL5.png', x, y);
+//         arrow.scale = 0.05;
+//         updateDraw(points,extraLengths,null,-1,-1,true);
+//     }
 
-    canvas.ontouchend = function (ev) {
-        ev.preventDefault();
-        let x = ev.changedTouches[0].pageX;
-        let y = ev.changedTouches[0].pageY;
-        two.clear();
-        arrow = new Two.Sprite('https://i.imgur.com/MfrzZL5.png', x, y);
-        arrow.scale = 0.05;
-        updateDraw(points, extraLengths, null, -1, -1, true);
+//     canvas.ontouchmove = function (ev) {
+//     }
+// }
+
+// btnArrow2.onclick = function (ev) {
+  
+//     canvas.ontouchend = function (ev) {
+//         ev.preventDefault();
+//         let x = ev.changedTouches[0].pageX;
+//         let y = ev.changedTouches[0].pageY;
+//         two.clear();
+//         arrow = new Two.Sprite('https://i.imgur.com/Qzte734.png', x, y);
+//         arrow.scale = 0.05;
+//         updateDraw(points,extraLengths,null,-1,-1,true);
+//     }
+
+//     canvas.ontouchmove = function (ev) {
+//     }
+// }
+
+// btnExport.onclick = function (ev) {
+//     var dataURL = canvas.toDataURL('img/png');
+//     localStorage.setItem('imgDataURL', dataURL);
+//     localStorage.setItem('canvasWidth', canvas.style.width);
+//     localStorage.setItem('canvasHeight', canvas.style.height);
+//     localStorage.setItem('points', JSON.stringify(points));
+//     window.location.href = 'nextPage.html';
+// }
+
+
+/*
+document.getElementById("btnClosed").addEventListener('click', function () {
+
+    if (isPolygonClosed == false) {
+        isPolygonClosed = true;
+        btnClosed.style.backgroundImage = "url('img/circle-notch-solid.svg')";
+        points.push(new Two.Anchor(points[0].x, points[0].y, 0, 0, 0, 0, Two.Commands.line));
     }
-
-    canvas.ontouchmove = function (ev) {
+    else if (isPolygonClosed == true) {
+        isPolygonClosed = false;
+        btnClosed.style.backgroundImage = "url('img/circle-regular.svg')";
+        points.pop();
     }
-}
+    updateDraw(points, extraLengths);
 
-btnArrow2.onclick = function (ev) {
-
-    lblArrow1.classList.remove("active");
-    lblArrow2.classList.add("active");
-
-    canvas.ontouchend = function (ev) {
-        ev.preventDefault();
-        let x = ev.changedTouches[0].pageX;
-        let y = ev.changedTouches[0].pageY;
-        two.clear();
-        arrow = new Two.Sprite('https://i.imgur.com/Qzte734.png', x, y);
-        arrow.scale = 0.05;
-        updateDraw(points, extraLengths, null, -1, -1, true);
-    }
-
-    canvas.ontouchmove = function (ev) {
-    }
-}
-
-btnExport.onclick = function (ev) {
-    var dataURL = canvas.toDataURL('img/png');
-    localStorage.setItem('imgDataURL', dataURL);
-    localStorage.setItem('canvasWidth', canvas.style.width);
-    localStorage.setItem('canvasHeight', canvas.style.height);
-    localStorage.setItem('points', JSON.stringify(points));
-    window.location.href = 'nextPage.html';
-}
+}, false);*/
 
 btnClosed.onclick = function (events) {
 }
@@ -317,7 +322,7 @@ function updateDraw(points, extraLengths = null, previewPoint = null, highlightP
             txt.rotation = angleNext;
             two.add(txt);
 
-            if (showExtraLengths && extraLengths != null) {
+            if (advancedEdit && extraLengths != null) {
                 var extratxt = new Two.Text("(" + extraLengths[i] + ")", advancedEdittxtLocationX, advancedEdittxtLocationY);
 
                 extratxt.rotation = angleNext;
@@ -435,22 +440,12 @@ function enterDrawLineMode() {
     divSketch.classList.add("grid");
     btnUndo.disabled = false;
     btnClosed.disabled = false;
-    if (showLengthsAndAnglesOnDrawMode) {
-        updateDraw(points, extraLengths, null, -1, -1, true);
-    }
-    else {
-        updateDraw(points, extraLengths);
-    }
+    updateDraw(points, extraLengths);
 
     btnUndo.onclick = function (events) {
         points.pop();
         two.clear();
-        if (showLengthsAndAnglesOnDrawMode) {
-            updateDraw(points, extraLengths, null, -1, -1, true);
-        }
-        else {
-            updateDraw(points, extraLengths);
-        }
+        updateDraw(points, extraLengths);
     }
 
     canvas.ontouchend = function (ev) {
@@ -465,13 +460,7 @@ function enterDrawLineMode() {
         else {
             points.push(new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line));
         }
-
-        if (showLengthsAndAnglesOnDrawMode) {
-            updateDraw(points, extraLengths, null, -1, -1, true);
-        }
-        else {
-            updateDraw(points, extraLengths);
-        }
+        updateDraw(points, extraLengths);
     }
 
     canvas.ontouchmove = function (ev) {
@@ -483,12 +472,7 @@ function enterDrawLineMode() {
 
         if (points.length > 0) {
             two.clear();
-            if (showLengthsAndAnglesOnDrawMode) {
-                updateDraw(points, extraLengths, previewPoint, -1, -1, true);
-            }
-            else {
-                updateDraw(points, extraLengths, previewPoint);
-            }
+            updateDraw(points, extraLengths, previewPoint);
             points.pop();
         }
     }
@@ -499,23 +483,12 @@ function enterDrawCurveMode() {
     divSketch.classList.add("grid");
     btnUndo.disabled = false;
     btnClosed.disabled = false;
-
-    if (showLengthsAndAnglesOnDrawMode) {
-        updateDraw(points, extraLengths, null, -1, -1, true);
-    }
-    else {
-        updateDraw(points, extraLengths);
-    }
+    updateDraw(points, extraLengths);
 
     btnUndo.onclick = function (events) {
         points.pop();
         two.clear();
-        if (showLengthsAndAnglesOnDrawMode) {
-            updateDraw(points, extraLengths, null, -1, -1, true);
-        }
-        else {
-            updateDraw(points, extraLengths);
-        }
+        updateDraw(points, extraLengths);
     }
 
     canvas.ontouchend = function (ev) {
@@ -574,13 +547,7 @@ function enterDrawCurveMode() {
                 points.push(new Two.Anchor(x, y, 0, 0, 0, 0, Two.Commands.line));
             }
         }
-
-        if (showLengthsAndAnglesOnDrawMode) {
-            updateDraw(points, extraLengths, null, -1, -1, true);
-        }
-        else {
-            updateDraw(points, extraLengths);
-        }
+        updateDraw(points, extraLengths);
     }
 
     canvas.ontouchmove = function (ev) {
@@ -592,14 +559,7 @@ function enterDrawCurveMode() {
 
         if (points.length > 0) {
             two.clear();
-
-            if (showLengthsAndAnglesOnDrawMode) {
-                updateDraw(points, extraLengths, previewPoint, -1, -1, true);
-            }
-            else {
-                updateDraw(points, extraLengths, previewPoint);
-            }
-
+            updateDraw(points, extraLengths, previewPoint);
             points.pop();
         }
     }
